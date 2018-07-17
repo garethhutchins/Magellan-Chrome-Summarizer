@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<head>
+<script type = "text/javascript" src='popup.js'></script>
+<style>
+        .slidecontainer {
+            width: 100%;
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 25px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+        
+        .slider:hover {
+            opacity: 1;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        </style>
+</head>
+<body style="width:400px;">
+    
+    <style>
+        .slidecontainer {
+            width: 100%;
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 25px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+        
+        .slider:hover {
+            opacity: 1;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        </style>
+        </head>
+        <body>
+        <img src="logo.png" width="100%">
+        <p>Drag the slider to change the number of sentences</p>
+        
+        <div class="slidecontainer">
+          <input type="range" min="1" max="20" value="2" class="slider" id="myRange">
+          <p>Number of Sentences: <span id="demo"></span></p>
+          <p><font size = "3">Subjectivity: <span id ="subjectivity"></span></font></p>
+          <p><font size = "3">Tone: <span id ="tone"></span></font></p>
+          <p><font size ="3"><span id="summary"></span></font></p>
+        </div>
+        <p>
+                Contact:
+                <a id="contact" href="mailto:gareth.hutchins@opentext.com?Subject=Magellan%20Summarizer" target="_blank">gareth.hutchins@opentext.com</a>
+                </p>
+
+<span hidden id="message">There's a Problem with the Script</span>
+</body>
+</html>
