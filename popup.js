@@ -1,17 +1,7 @@
-chrome.runtime.onMessage.addListener(function(request, sender) {
-    if (request.action == "getSource") {
-      message.innerText = request.source;
-    }
-  });
+
   function update() {
-    var sentences = document.querySelector('#demo');
-    var ranger = document.querySelector('#myRange');
-    var message = document.querySelector('#message');
-    var summary = document.querySelector('#summary');
-    var subjectivity = document.querySelector('#subjectivity');
-    var tone = document.querySelector('#tone');
-    sentences.innerText = ranger.value;
-    var magellanResult = callMagellan(message,ranger,summary,subjectivity,tone);
+    console.log("Call Update")
+    executeStuff()
   }
   function cleanXmlChars(input) {
     var NOT_SAFE_IN_XML_1_0 = /[^\x09\x0A\x0D\x20-\xFF\x85\xA0-\uD7FF\uE000-\uFDCF\uFDE0-\uFFFD]/gm;
@@ -19,9 +9,9 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
 };
 
   function callMagellan(content,ranger,summary,Subjectivity,tone) {
-    var result = '';
+    var retSummary = '';
     //Clean the Content
-    var text = content.innerText;
+    var text = content;
     text = cleanXmlChars(text);
     text = text.replace(/[\n\r]+/g, ' ');
     text = text.replace(/&/g,"&amp;");
@@ -37,7 +27,8 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
     //Say we're looking for # sentences
     command = command + "</NSTEIN_Text><LanguageID>ENGLISH</LanguageID><Methods><nsummarizer><NbSentences>" + ranger.value + "</NbSentences><KBid>IPTC</KBid></nsummarizer><NSentiment></NSentiment></Methods></Nserver>";
     //now do the post
-    var URL = 'http://[Your TME URL]:40002/rs/';
+
+    var URL = 'http://otca-demo.eastus2.cloudapp.azure.com:40002/rs/';
     //var result = "";
     fetch(URL, {
       method: "POST",
@@ -55,23 +46,49 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
     .then(function(text) {
       parser = new DOMParser();
       var xmlDoc = parser.parseFromString(text,"text/xml");
-      result = xmlDoc.getElementsByTagName("Summary")[0].textContent;
-      console.log(result);
-      summary.innerText = result;
+      retSummary = xmlDoc.getElementsByTagName("Summary")[0].textContent;
+      console.log(retSummary);
+      summary.innerText = retSummary;
       var DocLevels = xmlDoc.getElementsByTagName("DocumentLevel")[0];
       Subjectivity.innerText = DocLevels.getElementsByTagName("Subjectivity")[0].textContent;
       tone.innerText = DocLevels.getElementsByTagName("Tone")[0].textContent;
       console.log('Subjectivity' + Subjectivity);
       console.log('Tone' + tone);
-      return result;
+      return retSummary;
     })
   }
 
- 
+  function DOMtoString() {
+    //Remove all of the hidden stuff
+    var divs = document.getElementsByTagName("div");
+    for (divx of divs) {
+        if (divx.style.display === 'none') {
+            var divId = divx.id;
+            console.log(divId);
+            var divR = document.getElementById(divId);
+            console.log(divR);
+            if (divR !== null) {
+             divR.parentNode.removeChild(divR);
+            }
+            
+        }
+    }
+     var allPs = document.getElementsByTagName("p");
+     var rText = "";
+     for (val of allPs) {
+         if (val.style.display != 'none' || val.hidden != true) {
+             rText += val.innerText + '. ';
+         }
+     }
+     return rText;
+     
+ }
   
   function onWindowLoad() {
-  
-    var message = document.querySelector('#message');
+    console.log("Window Load")
+    executeStuff()
+  }
+  function executeStuff () {
     var sentences = document.querySelector('#demo');
     var ranger = document.querySelector('#myRange');
     var summary = document.querySelector('#summary');
@@ -79,17 +96,18 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
     sentences.innerText = ranger.value;
     var subjectivity = document.querySelector('#subjectivity');
     var tone = document.querySelector('#tone');
-    chrome.tabs.executeScript(null, {
-      file: "getPagesSource.js"
-    }, function() {
-      // If you try and inject into an extensions page or the webstore/NTP you'll get an error
-      if (chrome.runtime.lastError) {
-        message.innerText = 'There was an error running the script : \n' + chrome.runtime.lastError.message;
-      }
-      else {
-        var magellanResult = callMagellan(message,ranger,summary,subjectivity,tone);
-      }
-    });
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      console.log("Execute Script");
+      chrome.scripting.executeScript({
+      target : { tabId : tabs[0].id},
+      func : DOMtoString
+    }, (result)=> {
+      var message = result[0].result
+      //console.log("Text from Page " + message)
+      var magellanResult = callMagellan(message,ranger,summary,subjectivity,tone);
+      //console.log("Recv result = " + result[0].result);
+    })});
+   
   }
   
 window.onload = onWindowLoad;

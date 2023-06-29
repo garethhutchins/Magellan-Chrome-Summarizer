@@ -1,11 +1,14 @@
 {
-    "name": "Magellan",
-    "version": "1.0",
-    "manifest_version": 2,
-    "description": "Get pages source from a popup",
-    "browser_action": {
+    "name": "Opentext Magellan Summarizer",
+    "version": "2.0",
+    "manifest_version": 3,
+    "permissions": ["scripting"],
+    "host_permissions": [
+      "<all_urls>"
+    ],
+    "action" : {
+      "default_title" : "Summarise Current Web Page",
       "default_icon": "icon.png",
       "default_popup": "popup.html"
-    },
-    "permissions": ["tabs", "<all_urls>"]
+    }
   }
